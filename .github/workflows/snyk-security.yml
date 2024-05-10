@@ -1,0 +1,31 @@
+name: escaneo seguridad
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  Scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Scan dependencies with Snyk
+        uses: snyk/snyk-action@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Scan dependencies with Dependency-Track
+        uses: OWASP/dependency-track-action@master
+        env:
+          DEPENDENCY_TRACK_SERVER_URL: ${{ secrets.DEPENDENCY_TRACK_SERVER_URL }}
+          DEPENDENCY_TRACK_API_KEY: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
+
+      - name: Scan dependencies with OSSIndex
+        uses: ossindex/ossindex-action@master
+        with:
+          token: ${{ secrets.OSSINDEX_TOKEN }}
